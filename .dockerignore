@@ -1,0 +1,12 @@
+.git
+.cache
+
+.gitignore
+.dockerignore
+Dockerfile
+*.md
+*.sh
+*.yml
+node_modules
+.eslintrc.cjs
+.env
