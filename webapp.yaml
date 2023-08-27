@@ -32,6 +32,9 @@ spec:
         image: jy7123943/test-docker:latest
         ports:
         - containerPort: 3000
+        env:
+        - name: SAMPLE_ENV
+          value: sample
 ---
 # https://kubernetes.io/docs/concepts/services-networking/service/
 apiVersion: v1
@@ -39,6 +42,8 @@ kind: Service
 metadata:
   name: webapp-service
 spec:
+  # default: ClusterIP -> Internal Service (NodePort -> External Service)
+  type: NodePort
   # selector: select pods to forward the requests to
   # 이 Service가 관리하는 Pod을 선택하기 위한 selector
   selector:
@@ -49,3 +54,7 @@ spec:
       port: 3000
       # targetPort: Pod이 사용하는 포트, containerPort와 같아야 함
       targetPort: 3000
+      # exposes the Service on each Node's IP at a static port
+      # <NodeIP>:<NodePort>로 외부에서 접근 가능
+      # must be in the range of 30000-32767
+      nodePort: 30100
