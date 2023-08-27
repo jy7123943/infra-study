@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  # labels: key-value pairs that are attached to k8s resources
+  # Labels do not provide uniqueness. (all Pod replicas have the same label)
+  # Connecting Deployment to all Pod replicas
+  labels:
+    app: webapp
+spec:
+  # spec: How many pods you want to create?
+  replicas: 1
+  # selector: Identify a set of resources
+  # Match all Pods with label "app:nginx"
+  # 이 Deployment가 관리하는 Pod을 선택하기 위한 selector
+  selector:
+    matchLabels:
+      app: webapp
+  # template: configuration for pod, has its own metadata and spec section
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      # containers: configuration for containers in the pod
+      # which image to use, how many replicas, etc.
+      containers:
+      - name: webapp
+        # image: docker image to use
+        # Docker hub에서 복붙
+        image: jy7123943/test-docker:latest
+        ports:
+        - containerPort: 3000
+---
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  # selector: select pods to forward the requests to
+  # 이 Service가 관리하는 Pod을 선택하기 위한 selector
+  selector:
+    app.kubernetes.io/name: webapp
+  ports:
+    - protocol: TCP
+      # port: Service가 사용할 포트
+      port: 3000
+      # targetPort: Pod이 사용하는 포트, containerPort와 같아야 함
+      targetPort: 3000
